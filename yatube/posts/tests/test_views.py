@@ -41,7 +41,8 @@ class PostsViewsTests(TestCase):
         templates_page_names = {
             reverse('posts:index'): 'posts/index.html',
             reverse('posts:group_list',
-                    kwargs={'slug': 'group-test-slug'}): 'posts/group_list.html',
+                    kwargs={'slug': 'group-test-slug'}
+                    ): 'posts/group_list.html',
             reverse('posts:profile',
                     kwargs={'username': 'auth'}): 'posts/profile.html',
             reverse('posts:post_detail',
@@ -57,7 +58,9 @@ class PostsViewsTests(TestCase):
                 self.assertTemplateUsed(response, template)
 
     def test_posts_create_correct_context(self):
-        """Шаблон create сформирован с правильным контекстом и правильными полями формы."""
+        """Шаблон create сформирован с правильным
+        контекстом и правильными полями формы.
+        """
         response = self.authorized_client.get(
             reverse('posts:post_create'))
 
@@ -115,7 +118,8 @@ class PostsViewsTests(TestCase):
 
     def test_posts_post_check_presence_profile_page(self):
         response = self.guest_client.get(
-            reverse('posts:profile', kwargs={'username': PostsViewsTests.user}))
+            reverse('posts:profile',
+                    kwargs={'username': PostsViewsTests.user}))
         context_post = response.context['page_obj'][0]
         post_test = PostsViewsTests.post
         self.assertEqual(context_post, post_test)
@@ -145,7 +149,9 @@ class PaginatorViewsTest(TestCase):
         self.assertEqual(context_count, 37)
 
     def test_posts_profile_first_page_contains_ten_records(self):
-        """Проверка: на profile leo: количество постов на первой странице равно 10."""
+        """Проверка: на profile leo:
+        количество постов на первой странице равно 10.
+        """
         response = self.guest_client.get(
             reverse('posts:profile', kwargs={'username': 'leo'}))
         self.assertEqual(len(response.context['page_obj']), 10)
@@ -157,7 +163,9 @@ class PaginatorViewsTest(TestCase):
         self.assertEqual(len(response.context['page_obj']), 7)
 
     def test_posts_index_first_page_contains_ten_records(self):
-        """ Проверка: на index: количество постов на первой странице равно 10."""
+        """ Проверка: на index: количество постов на
+         первой странице равно 10.
+         """
         response = self.guest_client.get(
             reverse('posts:index'))
         self.assertEqual(len(response.context['page_obj']), 10)
@@ -178,11 +186,17 @@ class PaginatorViewsTest(TestCase):
         self.assertEqual(str(context_group), 'Третья группа')
 
     def test_posts_group_posts_page_first_page_contains_ten_records(self):
-        """  Проверка: на group_list: количество постов на первой странице равно 10."""
-        response = self.guest_client.get(reverse('posts:group_list', kwargs={'slug': 'third_group'}))
+        """  Проверка: на group_list: количество постов
+        на первой странице равно 10.
+        """
+        response = self.guest_client.get(
+            reverse('posts:group_list', kwargs={'slug': 'third_group'}))
         self.assertEqual(len(response.context['page_obj']), 10)
 
     def test_posts_group_posts_page_second_page_contains_three_records(self):
         """ Проверка: на group_list, 2 странице должно быть 6 постов."""
-        response = self.guest_client.get(reverse('posts:group_list', kwargs={'slug': 'third_group'}) + '?page=2')
+        response = self.guest_client.get(
+            reverse(
+                'posts:group_list',
+                kwargs={'slug': 'third_group'}) + '?page=2')
         self.assertEqual(len(response.context['page_obj']), 6)
