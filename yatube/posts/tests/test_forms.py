@@ -46,7 +46,9 @@ class PostsFormsTests(TestCase):
             follow=True
         )
 
-        self.assertRedirects(response, reverse('posts:profile', kwargs={'username': PostsFormsTests.user}))
+        self.assertRedirects(
+            response,
+            reverse('posts:profile', kwargs={'username': PostsFormsTests.user}))
 
         self.assertEqual(Post.objects.count(), posts_count + 1)
         self.assertTrue(
@@ -68,7 +70,8 @@ class PostsFormsTests(TestCase):
             follow=True
         )
 
-        self.assertRedirects(response, reverse('posts:post_detail', kwargs={'post_id': pk}))
+        self.assertRedirects(
+            response, reverse('posts:post_detail', kwargs={'post_id': pk}))
 
         self.assertTrue(
             Post.objects.get(pk=pk).text == 'Тестовый заголовок форма_изменили'

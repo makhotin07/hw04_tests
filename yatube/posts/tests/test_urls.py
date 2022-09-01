@@ -52,7 +52,8 @@ class PostsURLTests(TestCase):
 
     def test_posts_redirect_anonymous_on_login(self):
         """
-        Страницы в переменной login_required_urls перенаправят анонимного пользователя на страницу логина.
+        Страницы в переменной login_required_urls перенаправят
+        анонимного пользователя на страницу логина.
         """
 
         login_required_urls = [
@@ -62,8 +63,10 @@ class PostsURLTests(TestCase):
 
         for login_required_url in login_required_urls:
             with self.subTest(login_required_url=login_required_url):
-                response = self.guest_client.get(login_required_url, follow=True)
-                self.assertRedirects(response, f'/auth/login/?next={login_required_url}')
+                response = self.guest_client.get(
+                    login_required_url, follow=True)
+                self.assertRedirects(
+                    response, f'/auth/login/?next={login_required_url}')
 
     def test_posts_not_existing_url_404_status(self):
         """Несуществующая страница /posts/1/post выдает 404."""
