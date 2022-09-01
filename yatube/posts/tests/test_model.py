@@ -35,7 +35,7 @@ class PostsModelsTest(TestCase):
         self.assertEqual(str(post), post_text[:15])
 
     def test_model_post_verbose_name(self):
-        """verbose_name в полях совпадает с ожидаемым."""
+        """Verbose_name в полях совпадает с ожидаемым."""
         post = PostsModelsTest.post
         field_verboses = {
             'text': 'Текст поста',
@@ -49,7 +49,7 @@ class PostsModelsTest(TestCase):
                     post._meta.get_field(value).verbose_name, expected)
 
     def test_model_post_help_text(self):
-        """help_text в полях совпадает с ожидаемым."""
+        """Help_text в полях совпадает с ожидаемым."""
         post = PostsModelsTest.post
         field_verboses = {
             'text': 'Введите текст поста',

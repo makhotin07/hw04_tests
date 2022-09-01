@@ -51,9 +51,9 @@ class PostsURLTests(TestCase):
                 self.assertTemplateUsed(response, template)
 
     def test_posts_redirect_anonymous_on_login(self):
-        """Страницы в переменной login_required_urls перенаправят анонимного
-		пользователя на страницу логина.
-		"""
+        """
+        Страницы в переменной login_required_urls перенаправят анонимного пользователя на страницу логина.
+        """
 
         login_required_urls = [
             '/posts/1/edit/',
