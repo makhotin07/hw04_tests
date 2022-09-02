@@ -169,7 +169,8 @@ class PaginatorViewsTest(TestCase):
         context_count = response.context['count']
 
         self.assertEqual(str(context_author), 'leo')
-        self.assertEqual(context_count, PaginatorViewsTest.num_page_leo_user)
+        self.assertEqual(
+            context_count, PaginatorViewsTest.num_page_leo_user)
 
     def test_posts_profile_first_page_contains_ten_records(self):
         """Проверка: на profile leo:
@@ -177,13 +178,16 @@ class PaginatorViewsTest(TestCase):
         """
         response = self.guest_client.get(
             reverse('posts:profile', kwargs={'username': 'leo'}))
-        self.assertEqual(len(response.context['page_obj']), PaginatorViewsTest.num_first_page)
+        self.assertEqual(len(
+            response.context['page_obj']), PaginatorViewsTest.num_first_page)
 
     def test_posts_profile_fourth_page_contains_three_records(self):
         """Проверка: на profile leo 4 странице должно быть 7 постов."""
         response = self.guest_client.get(
-            reverse('posts:profile', kwargs={'username': 'leo'}) + '?page=4')
-        self.assertEqual(len(response.context['page_obj']), PaginatorViewsTest.num_seven_page)
+            reverse('posts:profile',
+                    kwargs={'username': 'leo'}) + '?page=4')
+        self.assertEqual(len(
+            response.context['page_obj']), PaginatorViewsTest.num_seven_page)
 
     def test_posts_index_first_page_contains_ten_records(self):
         """ Проверка: на index: количество постов на
@@ -191,13 +195,15 @@ class PaginatorViewsTest(TestCase):
          """
         response = self.guest_client.get(
             reverse('posts:index'))
-        self.assertEqual(len(response.context['page_obj']), PaginatorViewsTest.num_first_page)
+        self.assertEqual(len(
+            response.context['page_obj']), PaginatorViewsTest.num_first_page)
 
     def test_posts_index_fourth_page_contains_three_records(self):
         """  Проверка: на index, 4 странице должно быть 7 постов."""
         response = self.guest_client.get(
             reverse('posts:index') + '?page=4')
-        self.assertEqual(len(response.context['page_obj']), PaginatorViewsTest.num_seven_page)
+        self.assertEqual(len(
+            response.context['page_obj']), PaginatorViewsTest.num_seven_page)
 
     def test_posts_group_posts_page_show_correct_context(self):
         """  Проверка: на group_list: правильный контекст"""
@@ -214,7 +220,8 @@ class PaginatorViewsTest(TestCase):
         """
         response = self.guest_client.get(
             reverse('posts:group_list', kwargs={'slug': 'third_group'}))
-        self.assertEqual(len(response.context['page_obj']), PaginatorViewsTest.num_first_page)
+        self.assertEqual(len(
+            response.context['page_obj']), PaginatorViewsTest.num_first_page)
 
     def test_posts_group_posts_page_second_page_contains_three_records(self):
         """ Проверка: на group_list, 2 странице должно быть 6 постов."""
@@ -222,4 +229,5 @@ class PaginatorViewsTest(TestCase):
             reverse(
                 'posts:group_list',
                 kwargs={'slug': 'third_group'}) + '?page=2')
-        self.assertEqual(len(response.context['page_obj']), PaginatorViewsTest.num_six_page)
+        self.assertEqual(len(
+            response.context['page_obj']), PaginatorViewsTest.num_six_page)

@@ -74,10 +74,12 @@ class PostsFormsTests(TestCase):
         )
 
         self.assertRedirects(
-            response, reverse('posts:post_detail', kwargs={'post_id': post.id}))
+            response, reverse(
+                'posts:post_detail', kwargs={'post_id': post.id}))
 
         self.assertTrue(
-            Post.objects.get(pk=post.id).text == 'Тестовый заголовок форма_изменили'
+            Post.objects.get(
+                pk=post.id).text == 'Тестовый заголовок форма_изменили'
         )
 
         self.assertTrue(

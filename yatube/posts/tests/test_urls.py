@@ -87,5 +87,6 @@ class PostsURLTests(TestCase):
 
     def test_posts_not_existing_url_404_status(self):
         """Несуществующая страница /posts/1/post выдает 404."""
-        response = self.guest_client.get(f'/posts/{PostsURLTests.post.id}/post')
+        response = self.guest_client.get(
+            f'/posts/{PostsURLTests.post.id}/post')
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
