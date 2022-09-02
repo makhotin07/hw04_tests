@@ -27,7 +27,7 @@ from django.utils.version import get_version
 
 assert get_version() < '3.0.0', 'Пожалуйста, используйте версию Django < 3.0.0'
 
-from yatube_osn.settings import INSTALLED_APPS
+from yatube.settings import INSTALLED_APPS
 
 assert any(app in INSTALLED_APPS for app in ['posts.apps.PostsConfig', 'posts']), (
     'Пожалуйста зарегистрируйте приложение в `settings.INSTALLED_APPS`'

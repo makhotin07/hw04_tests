@@ -1,10 +1,8 @@
 from django.contrib.auth import get_user_model
-from django.test import Client
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 
-from ..models import Group
-from ..models import Post
+from posts.models import Group, Post
 
 User = get_user_model()
 
@@ -26,18 +24,17 @@ class PostsFormsTests(TestCase):
         )
 
     def setUp(self):
-        # Создаем неавторизованный клиент
         self.guest_client = Client()
-        # Создаем второй клиент
         self.authorized_client = Client()
-        # Авторизуем пользователя
         self.authorized_client.force_login(PostsFormsTests.user)
 
     def test_posts_post_create(self):
         """Валидная форма создает запись в Post."""
+
         posts_count = Post.objects.count()
         form_data = {
             'text': 'Тестовый заголовок форма',
+            'group': 1
         }
 
         response = self.authorized_client.post(
@@ -54,26 +51,41 @@ class PostsFormsTests(TestCase):
         self.assertEqual(Post.objects.count(), posts_count + 1)
         self.assertTrue(
             Post.objects.filter(
+                author=PostsFormsTests.user,
                 text='Тестовый заголовок форма',
+                group=PostsFormsTests.group
             ).exists()
         )
 
     def test_posts_post_edit(self):
         """Валидная форма изменяет запись в Post."""
-        pk = 1
+        post = Post.objects.get(pk=1)
+        posts_count = Post.objects.count()
+
         form_data = {
             'text': 'Тестовый заголовок форма_изменили',
+            'group': 1
         }
 
         response = self.authorized_client.post(
-            reverse('posts:post_edit', kwargs={'post_id': pk}),
+            reverse('posts:post_edit', kwargs={'post_id': post.id}),
             data=form_data,
             follow=True
         )
 
         self.assertRedirects(
-            response, reverse('posts:post_detail', kwargs={'post_id': pk}))
+            response, reverse('posts:post_detail', kwargs={'post_id': post.id}))
 
         self.assertTrue(
-            Post.objects.get(pk=pk).text == 'Тестовый заголовок форма_изменили'
+            Post.objects.get(pk=post.id).text == 'Тестовый заголовок форма_изменили'
         )
+
+        self.assertTrue(
+            Post.objects.filter(
+                author=PostsFormsTests.user,
+                text='Тестовый заголовок форма_изменили',
+                group=PostsFormsTests.group
+            ).exists()
+        )
+
+        self.assertEqual(Post.objects.count(), posts_count)
