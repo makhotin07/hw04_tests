@@ -96,7 +96,8 @@ class PostsViewsTests(TestCase):
 
         response = self.authorized_client.get(
             reverse(
-                PostsViewsTests.post_edit_endpoint, kwargs={'post_id': post.id}))
+                PostsViewsTests.post_edit_endpoint,
+                kwargs={'post_id': post.id}))
         is_edit = response.context.get('is_edit')
 
         self.assertEqual(is_edit, True)
