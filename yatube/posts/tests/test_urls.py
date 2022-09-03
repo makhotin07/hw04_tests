@@ -37,14 +37,16 @@ class PostsURLTests(TestCase):
 
         self.user_without_posts = User.objects.get(username='auth_2')
         self.authorized_client_without_posts = Client()
-        self.authorized_client_without_posts.force_login(self.user_without_posts)
+        self.authorized_client_without_posts.force_login(
+            self.user_without_posts)
 
     def test_posts_urls_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
         templates_url_names = {
             '/': 'posts/index.html',
             f'/group/{PostsURLTests.group.slug}/': 'posts/group_list.html',
-            f'/profile/{PostsURLTests.user_with_posts.username}/': 'posts/profile.html',
+            f'/profile/{PostsURLTests.user_with_posts.username}/':
+                'posts/profile.html',
             PostsURLTests.post_detail_url: 'posts/post_detail.html',
             PostsURLTests.post_edit_url: 'posts/create_post.html',
             PostsURLTests.post_create_url: 'posts/create_post.html',

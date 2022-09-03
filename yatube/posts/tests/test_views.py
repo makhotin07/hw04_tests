@@ -56,7 +56,8 @@ class PostsViewsTests(TestCase):
             reverse(PostsViewsTests.post_edit_endpoint,
                     kwargs={'post_id': post.id}): 'posts/create_post.html',
             reverse(
-                PostsViewsTests.post_create_endpoint): 'posts/create_post.html',
+                PostsViewsTests.post_create_endpoint
+            ): 'posts/create_post.html',
 
         }
 
@@ -86,7 +87,8 @@ class PostsViewsTests(TestCase):
         """Шаблон post_edit сформирован с правильным
         контекстом.
         """
-        post = Post.objects.get(text='Тестовый пост для оценки работы')
+        post = Post.objects.get(
+            text='Тестовый пост для оценки работы')
         form_fields = {
             'text': forms.fields.CharField,
             'group': forms.models.ModelChoiceField,
@@ -159,7 +161,10 @@ class PostsViewsTests(TestCase):
         self.assertIn(post, context_post)
 
     def test_posts_post_check_not_presence_group_page(self):
-        """Проверяет отсутствие поста не входящего в состав группы, на странице группы"""
+        """
+        Проверяет отсутствие поста не входящего в состав группы,
+        на странице группы
+        """
         group = Group.objects.get(title='Тестовая группа')
         post_2_without_group = Post.objects.get(pk=2)
 
@@ -171,7 +176,10 @@ class PostsViewsTests(TestCase):
         self.assertNotIn(post_2_without_group, context_posts)
 
     def test_posts_post_check_presence_profile_page(self):
-        """Проверяет наличие поста на странице пользователя, который его создал"""
+        """
+        Проверяет наличие поста на странице пользователя,
+         который его создал
+         """
         author = User.objects.get(username='auth')
         post = Post.objects.filter(author=author).first()
 
@@ -300,7 +308,9 @@ class PaginatorViewsTest(TestCase):
             response.context['page_obj']), PaginatorViewsTest.POST_PER_PAGE)
 
     def test_posts_group_posts_page_second_page_contains_three_records(self):
-        """ Проверка: на group_list third_group, на 2 странице должно быть 6 постов."""
+        """
+        Проверка: на group_list third_group,
+         на 2 странице должно быть 6 постов."""
         third_group = Group.objects.get(slug='third_group')
 
         response = self.guest_client.get(
