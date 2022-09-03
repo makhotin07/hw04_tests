@@ -1,11 +1,17 @@
+import shutil
+import tempfile
+
 from django import forms
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings, Client, TestCase
 from django.urls import reverse
 
 from posts.models import Group, Post
 
 User = get_user_model()
+TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
 
 class PostsViewsTests(TestCase):
@@ -321,3 +327,94 @@ class PaginatorViewsTest(TestCase):
 
         self.assertEqual(len(
             response.context['page_obj']), PaginatorViewsTest.num_six_page)
+
+
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
+class PostsCreateImageTests(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.small_gif = (
+            b'\x47\x49\x46\x38\x39\x61\x02\x00'
+            b'\x01\x00\x80\x00\x00\x00\x00\x00'
+            b'\xFF\xFF\xFF\x21\xF9\x04\x00\x00'
+            b'\x00\x00\x00\x2C\x00\x00\x00\x00'
+            b'\x02\x00\x01\x00\x00\x02\x02\x0C'
+            b'\x0A\x00\x3B')
+        cls.uploaded = SimpleUploadedFile(
+            name='small.gif',
+            content=cls.small_gif,
+            content_type='image/gif'
+        )
+        cls.user = User.objects.create_user(username='auth')
+        cls.group = Group.objects.create(
+            title='Тестовая группа c картинкой',
+            slug='group-test-slug-img',
+            description='Тестовое описание с картинкой',
+        )
+        cls.post_with_image = Post.objects.create(
+            author=cls.user,
+            text='Тестовый пост для оценки работы',
+            group=cls.group,
+            image=cls.uploaded
+        )
+        cls.post_index_endpoint = 'posts:index'
+        cls.post_group_list_endpoint = 'posts:group_list'
+        cls.post_profile_endpoint = 'posts:profile'
+        cls.post_detail_endpoint = 'posts:post_detail'
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+
+    def setUp(self):
+        self.guest_client = Client()
+        self.authorized_client = Client()
+        self.authorized_client.force_login(PostsCreateImageTests.user)
+
+    def test_posts_post_img_check_presence_context_index_page(self):
+        """Проверяет наличие поста с картинкой на странице Index."""
+        post = Post.objects.first()
+
+        response = self.authorized_client.get(
+            reverse(PostsCreateImageTests.post_index_endpoint))
+        post_with_image = response.context['page_obj'][0].image.url
+
+        self.assertEqual(post.image.url, post_with_image)
+
+    def test_posts_post_img_check_presence_context_profile_page(self):
+        """Проверяет наличие поста с картинкой на странице profile."""
+        author = User.objects.get(username='auth')
+        post = Post.objects.filter(author=author).first()
+
+        response = self.authorized_client.get(
+            reverse(PostsCreateImageTests.post_profile_endpoint,
+                    kwargs={'username': author.username}))
+        post_with_image = response.context['page_obj'][0].image.url
+
+        self.assertEqual(post.image.url, post_with_image)
+
+    def test_posts_post_img_check_presence_context_group_list_page(self):
+        """Проверяет наличие поста с картинкой на странице group_list."""
+        group = Group.objects.get(title='Тестовая группа c картинкой')
+        post = Post.objects.filter(group=group).first()
+
+        response = self.authorized_client.get(
+            reverse(
+                PostsCreateImageTests.post_group_list_endpoint,
+                kwargs={'slug': group.slug}))
+        post_with_image = response.context['page_obj'][0].image.url
+
+        self.assertEqual(post.image.url, post_with_image)
+
+    def test_posts_post_img_check_presence_context_post_detail_page(self):
+        """Проверяет наличие поста с картинкой на странице post_detail"""
+        post = Post.objects.get(group__title='Тестовая группа c картинкой')
+
+        response = self.authorized_client.get(
+            reverse(PostsCreateImageTests.post_detail_endpoint,
+                    kwargs={'post_id': post.id}))
+        context_post_detail = response.context['post_detail']
+
+        self.assertEqual(post.image.url, context_post_detail.image.url)

@@ -69,6 +69,7 @@ def post_create(request):
         auth_user = request.user
         new_post = form.save(commit=False)
         new_post.author = auth_user
+        print(new_post.image)
         new_post.save()
         return redirect('posts:profile', username=request.user.username)
 
