@@ -68,14 +68,16 @@ class PostsFormsTests(TestCase):
         }
 
         response = self.authorized_client.post(
-            reverse(PostsFormsTests.post_edit_endpoint, kwargs={'post_id': post.id}),
+            reverse(PostsFormsTests.post_edit_endpoint,
+                    kwargs={'post_id': post.id}),
             data=form_data,
             follow=True
         )
 
         self.assertRedirects(
             response, reverse(
-                PostsFormsTests.post_detail_endpoint, kwargs={'post_id': post.id}))
+                PostsFormsTests.post_detail_endpoint,
+                kwargs={'post_id': post.id}))
         self.assertTrue(
             Post.objects.get(
                 pk=post.id).text == 'Тестовый заголовок форма_изменили'

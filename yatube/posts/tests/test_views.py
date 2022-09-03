@@ -55,7 +55,8 @@ class PostsViewsTests(TestCase):
                     kwargs={'post_id': post.id}): 'posts/post_detail.html',
             reverse(PostsViewsTests.post_edit_endpoint,
                     kwargs={'post_id': post.id}): 'posts/create_post.html',
-            reverse(PostsViewsTests.post_create_endpoint): 'posts/create_post.html',
+            reverse(
+                PostsViewsTests.post_create_endpoint): 'posts/create_post.html',
 
         }
 
@@ -92,7 +93,8 @@ class PostsViewsTests(TestCase):
         }
 
         response = self.authorized_client.get(
-            reverse(PostsViewsTests.post_edit_endpoint, kwargs={'post_id': post.id}))
+            reverse(
+                PostsViewsTests.post_edit_endpoint, kwargs={'post_id': post.id}))
         is_edit = response.context.get('is_edit')
 
         self.assertEqual(is_edit, True)
@@ -106,7 +108,9 @@ class PostsViewsTests(TestCase):
         group = Group.objects.get(title='Тестовая группа')
 
         response = self.guest_client.get(
-            reverse(PostsViewsTests.post_group_list_endpoint, kwargs={'slug': group.slug}))
+            reverse(
+                PostsViewsTests.post_group_list_endpoint,
+                kwargs={'slug': group.slug}))
         context_group = response.context['group']
 
         self.assertEqual(str(context_group), group.title)
@@ -119,7 +123,8 @@ class PostsViewsTests(TestCase):
         post = Post.objects.get(text='Тестовый пост для оценки работы')
 
         response = self.guest_client.get(
-            reverse(PostsViewsTests.post_detail_endpoint, kwargs={'post_id': post.id}))
+            reverse(PostsViewsTests.post_detail_endpoint,
+                    kwargs={'post_id': post.id}))
         context_author = response.context['author']
         context_post_detail = response.context['post_detail']
         context_post_detail_text = context_post_detail.text
@@ -135,7 +140,8 @@ class PostsViewsTests(TestCase):
         """Проверяет наличие поста на странице Index."""
         post = Post.objects.first()
 
-        response = self.guest_client.get(reverse(PostsViewsTests.post_index_endpoint))
+        response = self.guest_client.get(
+            reverse(PostsViewsTests.post_index_endpoint))
         context_post = response.context['page_obj']
 
         self.assertIn(post, context_post)
@@ -145,7 +151,9 @@ class PostsViewsTests(TestCase):
         post = Post.objects.get(group__title='Тестовая группа')
 
         response = self.guest_client.get(
-            reverse(PostsViewsTests.post_group_list_endpoint, kwargs={'slug': post.group.slug}))
+            reverse(
+                PostsViewsTests.post_group_list_endpoint,
+                kwargs={'slug': post.group.slug}))
         context_post = response.context['page_obj']
 
         self.assertIn(post, context_post)
@@ -156,7 +164,8 @@ class PostsViewsTests(TestCase):
         post_2_without_group = Post.objects.get(pk=2)
 
         response = self.guest_client.get(
-            reverse(PostsViewsTests.post_group_list_endpoint, kwargs={'slug': group.slug}))
+            reverse(PostsViewsTests.post_group_list_endpoint,
+                    kwargs={'slug': group.slug}))
         context_posts = response.context['page_obj']
 
         self.assertNotIn(post_2_without_group, context_posts)
@@ -178,7 +187,8 @@ class PostsViewsTests(TestCase):
         post = Post.objects.get(group__title='Тестовая группа')
 
         response = self.guest_client.get(
-            reverse(PostsViewsTests.post_detail_endpoint, kwargs={'post_id': post.id}))
+            reverse(PostsViewsTests.post_detail_endpoint,
+                    kwargs={'post_id': post.id}))
         context_post_detail = response.context['post_detail']
 
         self.assertEqual(context_post_detail.group, post.group)
@@ -219,7 +229,8 @@ class PaginatorViewsTest(TestCase):
         user_leo = User.objects.get(username='leo')
 
         response = self.guest_client.get(
-            reverse(PaginatorViewsTest.post_profile_endpoint, kwargs={'username': user_leo.username}))
+            reverse(PaginatorViewsTest.post_profile_endpoint,
+                    kwargs={'username': user_leo.username}))
         context_author = response.context['author']
         context_count = response.context['count']
 
@@ -234,31 +245,37 @@ class PaginatorViewsTest(TestCase):
         user_leo = User.objects.get(username='leo')
 
         response = self.guest_client.get(
-            reverse(PaginatorViewsTest.post_profile_endpoint, kwargs={'username': user_leo.username}))
+            reverse(PaginatorViewsTest.post_profile_endpoint,
+                    kwargs={'username': user_leo.username}))
 
         self.assertEqual(len(
-            response.context['page_obj']), PaginatorViewsTest.POST_PER_PAGE)
+            response.context['page_obj']),
+            PaginatorViewsTest.POST_PER_PAGE)
 
     def test_posts_profile_fourth_page_contains_three_records(self):
         """Проверка:  profile leo на 4 странице должно быть 7 постов."""
         user_leo = User.objects.get(username='leo')
 
         response = self.guest_client.get(
-            reverse(PaginatorViewsTest.post_profile_endpoint,
-                    kwargs={'username': user_leo.username}) + '?page=4')
+            reverse(
+                PaginatorViewsTest.post_profile_endpoint,
+                kwargs={'username': user_leo.username}) + '?page=4')
 
         self.assertEqual(len(
-            response.context['page_obj']), PaginatorViewsTest.num_seven_page)
+            response.context['page_obj']),
+            PaginatorViewsTest.num_seven_page)
 
     def test_posts_index_first_page_contains_ten_records(self):
         """ Проверка: на index: количество постов на
          первой странице равно 10.
          """
         response = self.guest_client.get(
-            reverse(PaginatorViewsTest.post_index_endpoint))
+            reverse(
+                PaginatorViewsTest.post_index_endpoint))
 
         self.assertEqual(len(
-            response.context['page_obj']), PaginatorViewsTest.POST_PER_PAGE)
+            response.context['page_obj']),
+            PaginatorViewsTest.POST_PER_PAGE)
 
     def test_posts_index_fourth_page_contains_three_records(self):
         """  Проверка:  index, на 4 странице должно быть 7 постов."""
@@ -275,7 +292,9 @@ class PaginatorViewsTest(TestCase):
         third_group = Group.objects.get(slug='third_group')
 
         response = self.guest_client.get(
-            reverse(PaginatorViewsTest.post_group_list_endpoint, kwargs={'slug': third_group.slug}))
+            reverse(
+                PaginatorViewsTest.post_group_list_endpoint,
+                kwargs={'slug': third_group.slug}))
 
         self.assertEqual(len(
             response.context['page_obj']), PaginatorViewsTest.POST_PER_PAGE)

@@ -108,7 +108,9 @@ class PostsURLTests(TestCase):
             login_required_edit_url, follow=True)
 
         self.assertRedirects(
-            response, reverse(PostsURLTests.post_detail_endpoint, kwargs={'post_id': post.id}))
+            response, reverse(
+                PostsURLTests.post_detail_endpoint,
+                kwargs={'post_id': post.id}))
 
     def test_posts_not_existing_url_404_status(self):
         """Несуществующая страница выдает 404."""
