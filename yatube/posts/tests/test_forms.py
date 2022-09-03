@@ -130,7 +130,7 @@ class PostsCreateFormTests(TestCase):
         self.authorized_client = Client()
         self.authorized_client.force_login(PostsCreateFormTests.user)
 
-    def test_posts_create_post_with_image(self):
+    #def test_posts_create_post_with_image(self):
         """Тестируется форма создание поста с добавлением изображения."""
         posts_count = Post.objects.count()
         group = Group.objects.get(title='Тестовая группа c картинкой')
